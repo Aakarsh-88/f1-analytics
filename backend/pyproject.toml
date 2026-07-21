@@ -1,0 +1,21 @@
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+known_first_party = ["app"]
+
+[tool.mypy]
+python_version = "3.11"
+disallow_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
