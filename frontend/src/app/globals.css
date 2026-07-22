@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Titillium Web", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Light mode surface tokens */
+  --surface-bg: 244 245 247; /* paper */
+  --surface-card: 255 255 255;
+  --surface-elevated: 255 255 255;
+  --surface-border: 225 227 232;
+  --text-primary: 10 12 15;
+  --text-secondary: 90 97 108;
+}
+
+.dark {
+  /* Dark mode surface tokens */
+  --surface-bg: 10 12 15; /* carbon-950 */
+  --surface-card: 20 23 28; /* carbon-900 */
+  --surface-elevated: 29 33 39; /* carbon-800 */
+  --surface-border: 42 47 55; /* line */
+  --text-primary: 245 246 247;
+  --text-secondary: 148 156 168;
+}
+
+@layer base {
+  * {
+    border-color: rgb(var(--surface-border));
+  }
+
+  body {
+    background-color: rgb(var(--surface-bg));
+    color: rgb(var(--text-primary));
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: 0.01em;
+  }
+
+  /* Visible keyboard focus everywhere — never suppressed */
+  :focus-visible {
+    outline: 2px solid theme("colors.f1.red");
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: theme("colors.f1.red");
+    color: white;
+  }
+}
+
+@layer components {
+  /* Subtle carbon-fiber weave texture for dark-mode surfaces */
+  .texture-carbon {
+    background-image: theme("backgroundImage.carbon-weave");
+  }
+
+  /* The signature "sector strip" — a 3-segment hairline bar, echoing F1's
+     mini-sector timing display. Used atop cards and as a loading state. */
+  .sector-strip {
+    display: flex;
+    height: 3px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+
+  .sector-strip > span {
+    flex: 1;
+    height: 100%;
+  }
+
+  .sector-strip-idle > span:nth-child(1) {
+    background-color: theme("colors.sector.purple");
+    opacity: 0.35;
+  }
+  .sector-strip-idle > span:nth-child(2) {
+    background-color: theme("colors.sector.green");
+    opacity: 0.35;
+  }
+  .sector-strip-idle > span:nth-child(3) {
+    background-color: theme("colors.sector.yellow");
+    opacity: 0.35;
+  }
+
+  .sector-strip-loading {
+    position: relative;
+    background: linear-gradient(
+      90deg,
+      theme("colors.sector.purple"),
+      theme("colors.sector.green"),
+      theme("colors.sector.yellow"),
+      theme("colors.sector.purple")
+    );
+    background-size: 200% 100%;
+    animation: sector-sweep 2.2s linear infinite;
+  }
+
+  .sector-strip-loading > span {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
