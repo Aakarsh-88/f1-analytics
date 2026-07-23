@@ -10,3 +10,21 @@ export interface DriverSummary {
   championships: number;
   winPercentage: number;
 }
+
+export interface ResultsBreakdown {
+  wins: number;
+  otherPodiums: number;
+  pointsFinishes: number;
+  noPointsFinishes: number;
+  dnfs: number;
+}
+
+export interface DriverDetail {
+  summary: DriverSummary;
+  totalRaces: number;
+  averageFinish: number;
+  dnfPercentage: number;
+  winsBySeasonChart: { season: number; wins: number }[];
+  resultsBreakdown: ResultsBreakdown;
+}
+

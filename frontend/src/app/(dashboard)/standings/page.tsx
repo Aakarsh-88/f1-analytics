@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs } from "@/components/ui/tabs";
-import { ConstructorStandingsTable } from "@/components/standings/constructor-standings-table";
-import { DriverStandingsTable } from "@/components/standings/driver-standings-table";
+import { ConstructorStandingsSection } from "@/components/standings/constructor-standings-section";
+import { DriverStandingsSection } from "@/components/standings/driver-standings-section";
 import { ProgressionChart } from "@/components/standings/progression-chart";
 import { getStandings } from "@/lib/api/standings";
 
@@ -34,12 +34,12 @@ export default async function StandingsPage() {
             {
               value: "drivers",
               label: "Drivers",
-              content: <DriverStandingsTable rows={standings.driverStandings} />,
+              content: <DriverStandingsSection rows={standings.driverStandings} />,
             },
             {
               value: "constructors",
               label: "Constructors",
-              content: <ConstructorStandingsTable rows={standings.constructorStandings} />,
+              content: <ConstructorStandingsSection rows={standings.constructorStandings} />,
             },
           ]}
         />
