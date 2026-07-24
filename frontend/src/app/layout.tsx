@@ -3,7 +3,11 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { ThemeProvider } from "@/components/layout/theme-provider";
+import { AuthProvider } from "@/lib/auth/provider";
 
+// Ignore missing type declarations for global CSS imports in this file
+// TypeScript may complain if '*.css' module types are not declared.
+// @ts-ignore
 import "./globals.css";
 
 const titillium = Titillium_Web({
@@ -27,14 +31,23 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "F1 Analytics",
-  description: "Formula 1 historical race, driver, and championship analytics dashboard.",
+  description:
+    "Formula 1 historical race, driver, and championship analytics dashboard.",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${titillium.variable} ${inter.variable} ${jetbrainsMono.variable} font-body`}>
-        <ThemeProvider>{children}</ThemeProvider>
+      <body
+        className={`${titillium.variable} ${inter.variable} ${jetbrainsMono.variable} font-body`}
+      >
+        <AuthProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
