@@ -54,6 +54,12 @@ export async function getSearchIndex(): Promise<SearchItem[]> {
       sublabel: "Drivers & Constructors",
       href: "/standings",
     },
+    {
+      type: "page",
+      label: "Analytics",
+      sublabel: "Constructor dominance, poles, fastest laps, podium trends",
+      href: "/analytics",
+    },
   ];
 
   return [...driverItems, ...constructorItems, ...raceItems, ...pageItems];

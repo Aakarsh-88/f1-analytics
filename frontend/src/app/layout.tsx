@@ -5,9 +5,7 @@ import type { ReactNode } from "react";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { AuthProvider } from "@/lib/auth/provider";
 
-// Ignore missing type declarations for global CSS imports in this file
-// TypeScript may complain if '*.css' module types are not declared.
-// @ts-ignore
+
 import "./globals.css";
 
 const titillium = Titillium_Web({

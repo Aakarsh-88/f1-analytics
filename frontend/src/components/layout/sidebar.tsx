@@ -1,6 +1,6 @@
 "use client";
 
-import { Gauge, MapPin, Settings, Shield, Trophy, Users } from "lucide-react";
+import { BarChart3, Gauge, MapPin, Settings, Shield, Trophy, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: "/constructors", label: "Constructors", icon: Shield },
   { href: "/races", label: "Race Explorer", icon: MapPin },
   { href: "/standings", label: "Championship", icon: Trophy },
+  { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
