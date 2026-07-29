@@ -40,7 +40,7 @@ class Settings(BaseSettings):
 
     # --- Database ---
     database_url: str = Field(
-        default="postgresql+psycopg2://f1admin:changeme@localhost:5432/f1_analytics"
+        default="postgresql+psycopg://f1admin:changeme@localhost:5432/f1_analytics"
     )
 
     # --- CORS ---
