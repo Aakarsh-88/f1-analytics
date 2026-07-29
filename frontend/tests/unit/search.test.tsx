@@ -12,13 +12,11 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
 }));
 
-jest.mock("@/lib/auth", () => ({
+jest.mock("@clerk/nextjs", () => ({
   SignedIn: () => null,
   SignedOut: ({ children }: { children: ReactNode }) => <>{children}</>,
-  AuthSignInButton: () => <button>Sign in</button>,
-  AuthSignUpButton: () => <button>Sign up</button>,
-  AuthUserMenu: () => null,
-  useAuthUser: () => ({ user: null, isLoaded: true, isSignedIn: false, signOut: jest.fn() }),
+  SignInButton: ({ children }: { children: ReactNode }) => <>{children}</>,
+  UserButton: () => <div>User</div>,
 }));
 
 const searchIndex: SearchItem[] = [

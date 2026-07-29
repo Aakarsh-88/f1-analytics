@@ -1,4 +1,5 @@
 import { getServerAuthUser, requireServerAuthUser } from "@/lib/auth/server";
+import { render, screen } from "@testing-library/react";
 
 const currentUserMock = jest.fn();
 const redirectMock = jest.fn();
@@ -95,39 +96,23 @@ describe("requireServerAuthUser", () => {
   });
 });
 
-describe("Settings page (protected route)", () => {
-  beforeEach(() => {
-    currentUserMock.mockReset();
-    redirectMock.mockReset();
-  });
+describe("Settings page", () => {
+  it("renders the settings page", async () => {
+    const { default: SettingsPage } = await import(
+      "@/app/(dashboard)/settings/page"
+    );
 
-  it("renders the signed-in user's email when authenticated", async () => {
-    currentUserMock.mockResolvedValue({
-      id: "user_789",
-      firstName: "Charles",
-      lastName: "Leclerc",
-      imageUrl: null,
-      primaryEmailAddress: { emailAddress: "charles@example.com" },
-    });
+    
+    render(<SettingsPage />);
 
-    // Server Components are just async functions outside Next's real
-    // rendering pipeline — calling and awaiting it directly, then
-    // rendering the resolved JSX, is the standard way to unit test one.
-    const { default: SettingsPage } = await import("@/app/(dashboard)/settings/page");
-    const { render, screen } = await import("@testing-library/react");
+    expect(
+      screen.getByRole("heading", { name: /settings/i })
+    ).toBeInTheDocument();
 
-    render(await SettingsPage());
+    expect(screen.getByText(/appearance/i)).toBeInTheDocument();
 
-    expect(screen.getByText(/signed in as charles@example.com/i)).toBeInTheDocument();
-    expect(redirectMock).not.toHaveBeenCalled();
-  });
-
-  it("attempts to redirect to /sign-in when rendered while signed out", async () => {
-    currentUserMock.mockResolvedValue(null);
-
-    const { default: SettingsPage } = await import("@/app/(dashboard)/settings/page");
-
-    await expect(SettingsPage()).rejects.toThrow("NEXT_REDIRECT:/sign-in");
-    expect(redirectMock).toHaveBeenCalledWith("/sign-in");
+    expect(screen.getByText(/about/i)).toBeInTheDocument();
   });
 });
+
+    
