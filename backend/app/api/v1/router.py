@@ -10,16 +10,16 @@ never needs to know about individual resources.
 
 from fastapi import APIRouter
 
-from app.api.v1 import health
+from app.api.v1 import constructors, drivers, health
 
 api_router = APIRouter()
 
 api_router.include_router(health.router)
+api_router.include_router(drivers.router)
+api_router.include_router(constructors.router)
 
 # --- Registered in later milestones as each resource is built ---
-# from app.api.v1 import drivers, constructors, races, standings, qualifying, lap_times, pit_stops, dashboard
-# api_router.include_router(drivers.router)
-# api_router.include_router(constructors.router)
+# from app.api.v1 import races, standings, qualifying, lap_times, pit_stops, dashboard
 # api_router.include_router(races.router)
 # api_router.include_router(standings.router)
 # api_router.include_router(qualifying.router)
