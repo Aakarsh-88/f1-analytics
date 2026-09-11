@@ -6,7 +6,7 @@ import type { FastestLapLeaderboardRow } from "@/types/analytics";
 
 export function FastestLapsChart({ rows }: { rows: FastestLapLeaderboardRow[] }) {
   return (
-    <ResponsiveContainer width="100%" height={240}>
+    <ResponsiveContainer width="100%" height={240} minWidth={1}>
       <BarChart
         data={rows}
         layout="vertical"

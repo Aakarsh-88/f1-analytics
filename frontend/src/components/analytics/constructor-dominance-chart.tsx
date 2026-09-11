@@ -27,7 +27,7 @@ interface ConstructorDominanceChartProps {
 
 export function ConstructorDominanceChart({ points, constructors }: ConstructorDominanceChartProps) {
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ResponsiveContainer width="100%" height={280} minWidth={1}>
       <LineChart data={points} margin={{ top: 8, right: 16, left: -8, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--surface-border))" vertical={false} />
         <XAxis

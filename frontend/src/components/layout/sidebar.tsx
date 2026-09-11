@@ -16,7 +16,7 @@ const NAV_ITEMS = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-export function Sidebar() {
+export function Sidebar({ seasonRange }: { seasonRange: { min: number; max: number } }) {
   const pathname = usePathname();
 
   return (
@@ -54,7 +54,7 @@ export function Sidebar() {
       </nav>
 
       <div className="border-t border-line p-4 text-xs text-[rgb(var(--text-secondary))]">
-        Data: 1950–2026 seasons
+        Data: {seasonRange.min}–{seasonRange.max} seasons
       </div>
     </aside>
   );

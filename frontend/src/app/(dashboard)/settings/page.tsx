@@ -32,10 +32,6 @@ export default function SettingsPage() {
         </CardHeader>
         <dl className="space-y-3 text-sm">
           <div className="flex justify-between border-b border-line pb-3">
-            <dt className="text-[rgb(var(--text-secondary))]">Data coverage</dt>
-            <dd className="font-mono">1950 – 2026</dd>
-          </div>
-          <div className="flex justify-between border-b border-line pb-3">
             <dt className="text-[rgb(var(--text-secondary))]">Data source</dt>
             <dd>Historical F1 dataset (CSV import)</dd>
           </div>

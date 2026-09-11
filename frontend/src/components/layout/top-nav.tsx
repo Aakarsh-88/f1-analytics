@@ -32,7 +32,13 @@ const TYPE_LABEL: Record<SearchItemType, string> = {
 
 const MAX_RESULTS = 8;
 
-export function TopNav({ searchIndex }: { searchIndex: SearchItem[] }) {
+export function TopNav({
+  searchIndex,
+  seasonRange,
+}: {
+  searchIndex: SearchItem[];
+  seasonRange?: { min: number; max: number };
+}) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -129,17 +135,22 @@ export function TopNav({ searchIndex }: { searchIndex: SearchItem[] }) {
       </div>
 
       <div className="flex items-center gap-4">
-  <select
-    aria-label="Season"
-    defaultValue="2026"
-    className="rounded-md border border-line bg-[rgb(var(--surface-elevated))] px-3 py-2 text-sm font-medium text-[rgb(var(--text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-f1-red"
-  >
-    {Array.from({ length: 10 }, (_, i) => 2026 - i).map((year) => (
-      <option key={year} value={year}>
-        {year} Season
-      </option>
-    ))}
-  </select>
+  {seasonRange && (
+    <select
+      aria-label="Season"
+      defaultValue={String(seasonRange.max)}
+      className="rounded-md border border-line bg-[rgb(var(--surface-elevated))] px-3 py-2 text-sm font-medium text-[rgb(var(--text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-f1-red"
+    >
+      {Array.from(
+        { length: Math.min(10, seasonRange.max - seasonRange.min + 1) },
+        (_, i) => seasonRange.max - i
+      ).map((year) => (
+        <option key={year} value={year}>
+          {year} Season
+        </option>
+      ))}
+    </select>
+  )}
 
   <ThemeToggle />
 
