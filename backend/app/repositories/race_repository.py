@@ -6,11 +6,15 @@ actually calls. Follows the same query style as result_repository.py
 (plain `select()`, no ORM-relationship shortcuts beyond what's needed).
 """
 
+import math
 from typing import Optional, Sequence
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
+from app.models.lap_time import LapTime
+from app.models.pit_stop import PitStop
+from app.models.qualifying import Qualifying
 from app.models.race import Race
 from app.models.result import Result
 
@@ -64,3 +68,77 @@ def get_race_results(db: Session, race_id: int) -> Sequence[Result]:
         .order_by(Result.position_order)
     )
     return db.execute(stmt).scalars().all()
+
+
+def list_races(db: Session) -> Sequence[Race]:
+    """Return all races, newest season and round first."""
+    stmt = select(Race).order_by(Race.year.desc(), Race.round.desc(), Race.race_id.desc())
+    return db.execute(stmt).scalars().all()
+
+
+def get_race_by_id(db: Session, race_id: int) -> Optional[Race]:
+    """Return one race by primary key, or None when it does not exist."""
+    stmt = select(Race).where(Race.race_id == race_id)
+    return db.execute(stmt).scalar_one_or_none()
+
+
+def get_race_qualifying(db: Session, race_id: int) -> Sequence[Qualifying]:
+    """Return qualifying entries ordered by qualifying position."""
+    stmt = (
+        select(Qualifying)
+        .options(joinedload(Qualifying.driver), joinedload(Qualifying.constructor))
+        .where(Qualifying.race_id == race_id)
+        .order_by(Qualifying.position.asc().nullslast(), Qualifying.qualify_id)
+    )
+    return db.execute(stmt).scalars().all()
+
+
+def get_race_pit_stops(db: Session, race_id: int) -> Sequence[PitStop]:
+    """Return pit stops in stop/lap order, with drivers eagerly loaded."""
+    stmt = (
+        select(PitStop)
+        .options(joinedload(PitStop.driver))
+        .where(PitStop.race_id == race_id)
+        .order_by(PitStop.stop, PitStop.lap, PitStop.driver_id)
+    )
+    return db.execute(stmt).scalars().all()
+
+
+def get_race_lap_times(db: Session, race_id: int) -> Sequence[LapTime]:
+    """Return lap times in lap/driver order, with drivers eagerly loaded."""
+    stmt = (
+        select(LapTime)
+        .options(joinedload(LapTime.driver))
+        .where(LapTime.race_id == race_id)
+        .order_by(LapTime.lap, LapTime.driver_id)
+    )
+    return db.execute(stmt).scalars().all()
+
+
+def parse_lap_time_to_seconds(value: Optional[str]) -> Optional[float]:
+    """Parse a lap-time string into seconds rounded to milliseconds."""
+    if value is None:
+        return None
+
+    try:
+        text = str(value).strip()
+        if not text:
+            return None
+
+        parts = text.split(":")
+        if len(parts) == 1:
+            seconds = float(parts[0])
+        elif len(parts) == 2:
+            minutes = float(parts[0])
+            remainder = float(parts[1])
+            if minutes < 0 or remainder < 0 or remainder >= 60:
+                return None
+            seconds = minutes * 60 + remainder
+        else:
+            return None
+
+        if not math.isfinite(seconds) or seconds < 0:
+            return None
+        return round(seconds, 3)
+    except (TypeError, ValueError, OverflowError):
+        return None
