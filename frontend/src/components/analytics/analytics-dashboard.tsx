@@ -379,14 +379,14 @@ export function AnalyticsDashboard({ data }: { data: AnalyticsData }) {
           <CardHeader>
             <CardTitle>Pole Positions (All-Time)</CardTitle>
           </CardHeader>
-          <PolePositionsChart rows={filteredPoleLeaderboard} />
+          <PolePositionsChart rows={filteredPoleLeaderboard} driverTeams={data.driverTeams} />
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle>Fastest Laps (All-Time)</CardTitle>
           </CardHeader>
-          <FastestLapsChart rows={filteredFastestLapLeaderboard} />
+          <FastestLapsChart rows={filteredFastestLapLeaderboard} driverTeams={data.driverTeams} />
         </Card>
       </div>
 
@@ -398,6 +398,7 @@ export function AnalyticsDashboard({ data }: { data: AnalyticsData }) {
           <AverageQualifyingChart
             points={filteredAvgQualifying}
             driverCodes={filteredDriverCodes}
+            driverTeams={data.driverTeams}
           />
         </Card>
 
@@ -408,6 +409,7 @@ export function AnalyticsDashboard({ data }: { data: AnalyticsData }) {
           <PodiumTrendsChart
             points={filteredPodiumTrends}
             driverCodes={filteredPodiumDriverCodes}
+            driverTeams={data.driverTeams}
           />
         </Card>
       </div>

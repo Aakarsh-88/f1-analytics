@@ -10,12 +10,16 @@ import {
   YAxis,
 } from "recharts";
 
-import type { PoleLeaderboardRow } from "@/types/analytics";
+import { getDriverColor } from "@/lib/analytics-driver-colors";
+import type { DriverTeamPoint, PoleLeaderboardRow } from "@/types/analytics";
+import { Cell } from "recharts";
 
 export function PolePositionsChart({
   rows,
+  driverTeams,
 }: {
   rows: PoleLeaderboardRow[];
+  driverTeams: DriverTeamPoint[];
 }) {
   return (
     <ResponsiveContainer width="100%" height={240} minWidth={1}>
@@ -71,12 +75,11 @@ export function PolePositionsChart({
           ]}
         />
 
-        <Bar
-          dataKey="poles"
-          fill="#9B5DE5"
-          radius={[0, 3, 3, 0]}
-          maxBarSize={20}
-        />
+        <Bar dataKey="poles" radius={[0, 3, 3, 0]} maxBarSize={20}>
+          {rows.map((row) => (
+            <Cell key={row.driverCode} fill={getDriverColor(driverTeams, row.driverCode)} />
+          ))}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );
