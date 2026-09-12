@@ -17,10 +17,54 @@ def test_cors_origins_list_handles_single_origin() -> None:
 
 
 def test_is_production_true_only_for_production_env() -> None:
-    assert Settings(app_env="production").is_production is True
-    assert Settings(app_env="Production").is_production is True  # case-insensitive
+    production_settings = {
+        "debug": False,
+        "database_url": "postgresql://db.example.com:5432/f1",
+        "cors_origins": "https://analytics.example.com",
+    }
+    assert Settings(app_env="production", **production_settings).is_production is True
+    assert Settings(app_env="Production", **production_settings).is_production is True  # case-insensitive
     assert Settings(app_env="development").is_production is False
     assert Settings(app_env="staging").is_production is False
+
+
+def test_production_rejects_debug_mode() -> None:
+    with pytest.raises(ValidationError, match="DEBUG must be false"):
+        Settings(
+            app_env="production",
+            database_url="postgresql://db.example.com:5432/f1",
+            cors_origins="https://analytics.example.com",
+        )
+
+
+def test_production_rejects_localhost_cors() -> None:
+    with pytest.raises(ValidationError, match="CORS_ORIGINS"):
+        Settings(
+            app_env="production",
+            debug=False,
+            database_url="postgresql://db.example.com:5432/f1",
+            cors_origins="http://localhost:3000,http://127.0.0.1:3000",
+        )
+
+
+@pytest.mark.parametrize(
+    "database_url",
+    ["", "not-a-database-url", "postgresql://localhost"],
+)
+def test_production_rejects_invalid_database_url(database_url: str) -> None:
+    with pytest.raises(ValidationError, match="DATABASE_URL"):
+        Settings(
+            app_env="production",
+            debug=False,
+            database_url=database_url,
+            cors_origins="https://analytics.example.com",
+        )
+
+
+def test_development_defaults_remain_compatible() -> None:
+    settings = Settings(app_env="development")
+    assert settings.debug is True
+    assert "http://localhost:3000" in settings.cors_origins_list
 
 
 def test_log_level_is_uppercased() -> None:

@@ -15,8 +15,9 @@ Why this matters:
 
 from functools import lru_cache
 from typing import List
+from urllib.parse import urlparse
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -72,6 +73,34 @@ class Settings(BaseSettings):
         if upper not in allowed:
             raise ValueError(f"log_level must be one of {allowed}, got '{v}'")
         return upper
+
+    @model_validator(mode="after")
+    def validate_production_safety(self) -> "Settings":
+        if not self.is_production:
+            return self
+
+        if self.debug:
+            raise ValueError("DEBUG must be false when APP_ENV=production")
+
+        origins = self.cors_origins_list
+        development_origins = {"http://localhost:3000", "http://127.0.0.1:3000"}
+        if not origins or set(origins).issubset(development_origins):
+            raise ValueError(
+                "CORS_ORIGINS must contain a non-localhost origin when APP_ENV=production"
+            )
+
+        parsed_database_url = urlparse(self.database_url)
+        if (
+            not self.database_url.strip()
+            or parsed_database_url.scheme not in {"postgresql", "postgresql+psycopg2"}
+            or not parsed_database_url.hostname
+            or not parsed_database_url.path.strip("/")
+        ):
+            raise ValueError(
+                "DATABASE_URL must be a valid PostgreSQL URL when APP_ENV=production"
+            )
+
+        return self
 
     @property
     def cors_origins_list(self) -> List[str]:
