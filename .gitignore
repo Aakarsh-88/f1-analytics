@@ -6,6 +6,8 @@ venv/
 __pycache__/
 .pytest_cache/
 *.pyc
+.coverage
+coverage/
 
 # Environment variables
 .env
@@ -17,5 +19,6 @@ __pycache__/
 # Node.js / Next.js
 node_modules/
 .next/
+*.tsbuildinfo
 dist/
 build/
