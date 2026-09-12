@@ -14,7 +14,7 @@ export default async function DashboardPage() {
       <div>
         <h1 className="font-display text-2xl font-bold">Dashboard</h1>
         <p className="mt-1 text-sm text-[rgb(var(--text-secondary))]">
-          76 seasons of Formula 1 history, at a glance.
+          {stats.totalSeasons} seasons of Formula 1 history, at a glance.
         </p>
       </div>
 
