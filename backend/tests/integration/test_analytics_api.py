@@ -227,6 +227,9 @@ class TestAnalyticsApi:
             Constructor(constructor_id=3, constructor_ref="mclaren", name="McLaren")
         )
         db_session.add(
+            Constructor(constructor_id=4, constructor_ref="test_team", name="Test Team")
+        )
+        db_session.add(
             Result(
                 result_id=4,
                 race_id=2,
@@ -242,15 +245,39 @@ class TestAnalyticsApi:
                 status_id=1,
             )
         )
+        db_session.add(
+            Result(
+                result_id=5,
+                race_id=2,
+                driver_id=2,
+                constructor_id=4,
+                grid=3,
+                position=4,
+                position_text="4",
+                position_order=4,
+                points=12,
+                laps=50,
+                rank=4,
+                status_id=1,
+            )
+        )
         db_session.commit()
 
         driver_teams = client_with_db.get("/api/v1/analytics").json()["driverTeams"]
 
         assert all(set(point) == {"season", "driverCode", "constructors"} for point in driver_teams)
         assert all(
-            all(set(constructor) == {"ref", "name"} for constructor in point["constructors"])
+            all(set(constructor) == {"ref", "name", "color"} for constructor in point["constructors"])
             for point in driver_teams
         )
+        constructors_by_ref = {
+            constructor["ref"]: constructor
+            for point in driver_teams
+            for constructor in point["constructors"]
+        }
+        assert constructors_by_ref["red_bull"]["color"] == "#3671C6"
+        assert constructors_by_ref["mclaren"]["color"] == "#FF8000"
+        assert constructors_by_ref["test_team"]["color"] == "#6B7280"
         assert {
             (point["season"], point["driverCode"]): {
                 constructor["ref"] for constructor in point["constructors"]

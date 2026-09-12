@@ -80,6 +80,7 @@ class PodiumTrends(CamelModel):
 class DriverTeamInfo(CamelModel):
     ref: str
     name: str
+    color: str
 
 
 class DriverTeamPoint(CamelModel):

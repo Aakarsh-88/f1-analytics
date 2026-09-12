@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 
 from sqlalchemy.orm import Session
 
+from app.core.team_colors import get_constructor_color
 from app.repositories import analytics_repository
 from app.schemas.analytics import (
     AnalyticsData,
@@ -89,7 +90,11 @@ def _driver_teams(rows) -> List[DriverTeamPoint]:
 
     for season, driver_code, constructor_ref, constructor_name in rows:
         constructors_by_driver[(season, driver_code)].append(
-            DriverTeamInfo(ref=constructor_ref, name=constructor_name)
+            DriverTeamInfo(
+                ref=constructor_ref,
+                name=constructor_name,
+                color=get_constructor_color(constructor_ref),
+            )
         )
 
     return [
