@@ -14,9 +14,8 @@ import type { SearchItem } from "@/types/search";
  * serializable data, so the client component never needs its own data
  * fetching or duplicate mock logic.
  *
- * Once the backend ships real endpoints, this becomes a single
- * aggregating call (or a dedicated `/api/v1/search` endpoint) — nothing
- * downstream of this function needs to change.
+ * The resource API modules own their backend requests, so this index stays
+ * focused on mapping their real responses into the shared search shape.
  */
 export async function getSearchIndex(): Promise<SearchItem[]> {
   const [drivers, constructors, races, standings] = await Promise.all([
