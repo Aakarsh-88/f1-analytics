@@ -9,6 +9,7 @@ __pycache__/
 
 # Environment variables
 .env
+/frontend/.env.local
 
 # VS Code (optional)
 .vscode/
