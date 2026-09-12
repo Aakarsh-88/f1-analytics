@@ -77,6 +77,17 @@ class PodiumTrends(CamelModel):
     points: List[PodiumTrendPoint]
 
 
+class DriverTeamInfo(CamelModel):
+    ref: str
+    name: str
+
+
+class DriverTeamPoint(CamelModel):
+    season: int
+    driver_code: str
+    constructors: List[DriverTeamInfo]
+
+
 class AnalyticsData(CamelModel):
     season_range: SeasonRange
     constructor_dominance: ConstructorDominance
@@ -84,3 +95,4 @@ class AnalyticsData(CamelModel):
     fastest_lap_leaderboard: List[FastestLapLeaderboardRow]
     avg_qualifying: AvgQualifying
     podium_trends: PodiumTrends
+    driver_teams: List[DriverTeamPoint]

@@ -106,3 +106,29 @@ def get_podium_trends(db: Session) -> Sequence:
         .order_by(Race.year, driver_code)
     )
     return db.execute(stmt).all()
+
+
+def get_driver_teams(db: Session) -> Sequence:
+    """Return constructors represented by each driver in each season."""
+    driver_code = func.coalesce(Driver.code, Driver.driver_ref).label("driver_code")
+    stmt = (
+        select(
+            Race.year,
+            driver_code,
+            Constructor.constructor_ref,
+            Constructor.name,
+        )
+        .join(Result, Result.race_id == Race.race_id)
+        .join(Driver, Driver.driver_id == Result.driver_id)
+        .join(Constructor, Constructor.constructor_id == Result.constructor_id)
+        .group_by(
+            Race.year,
+            Driver.driver_id,
+            Driver.code,
+            Driver.driver_ref,
+            Constructor.constructor_ref,
+            Constructor.name,
+        )
+        .order_by(Race.year, driver_code, Constructor.constructor_ref)
+    )
+    return db.execute(stmt).all()

@@ -154,6 +154,7 @@ class TestAnalyticsApi:
             "fastestLapLeaderboard",
             "avgQualifying",
             "podiumTrends",
+            "driverTeams",
         }
 
     def test_season_range_and_constructor_dominance_contract(self, db_session, client_with_db):
@@ -219,3 +220,40 @@ class TestAnalyticsApi:
         )
         assert "driverCode" in body["poleLeaderboard"][0]
         assert "fastestLaps" in body["fastestLapLeaderboard"][0]
+
+    def test_driver_teams_group_by_season_and_driver(self, db_session, client_with_db):
+        seed_analytics_dataset(db_session)
+        db_session.add(
+            Constructor(constructor_id=3, constructor_ref="mclaren", name="McLaren")
+        )
+        db_session.add(
+            Result(
+                result_id=4,
+                race_id=2,
+                driver_id=1,
+                constructor_id=3,
+                grid=2,
+                position=3,
+                position_text="3",
+                position_order=3,
+                points=15,
+                laps=50,
+                rank=3,
+                status_id=1,
+            )
+        )
+        db_session.commit()
+
+        driver_teams = client_with_db.get("/api/v1/analytics").json()["driverTeams"]
+
+        assert all(set(point) == {"season", "driverCode", "constructors"} for point in driver_teams)
+        assert all(
+            all(set(constructor) == {"ref", "name"} for constructor in point["constructors"])
+            for point in driver_teams
+        )
+        assert {
+            (point["season"], point["driverCode"]): {
+                constructor["ref"] for constructor in point["constructors"]
+            }
+            for point in driver_teams
+        }[(2023, "VER")] == {"red_bull", "mclaren"}

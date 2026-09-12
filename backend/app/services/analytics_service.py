@@ -18,6 +18,8 @@ from app.schemas.analytics import (
     PodiumTrendPoint,
     PodiumTrends,
     SeasonRange,
+    DriverTeamInfo,
+    DriverTeamPoint,
 )
 
 
@@ -82,6 +84,24 @@ def _podium_trends(rows) -> PodiumTrends:
     )
 
 
+def _driver_teams(rows) -> List[DriverTeamPoint]:
+    constructors_by_driver: Dict[tuple[int, str], List[DriverTeamInfo]] = defaultdict(list)
+
+    for season, driver_code, constructor_ref, constructor_name in rows:
+        constructors_by_driver[(season, driver_code)].append(
+            DriverTeamInfo(ref=constructor_ref, name=constructor_name)
+        )
+
+    return [
+        DriverTeamPoint(
+            season=season,
+            driver_code=driver_code,
+            constructors=constructors,
+        )
+        for (season, driver_code), constructors in sorted(constructors_by_driver.items())
+    ]
+
+
 def get_analytics_data(db: Session) -> AnalyticsData:
     minimum, maximum = analytics_repository.get_season_range(db)
     pole_rows = analytics_repository.get_pole_leaderboard(db)
@@ -89,6 +109,7 @@ def get_analytics_data(db: Session) -> AnalyticsData:
     constructor_rows = analytics_repository.get_constructor_dominance(db)
     qualifying_rows = analytics_repository.get_average_qualifying(db)
     podium_rows = analytics_repository.get_podium_trends(db)
+    driver_team_rows = analytics_repository.get_driver_teams(db)
 
     return AnalyticsData(
         season_range=SeasonRange(min=minimum or 0, max=maximum or 0),
@@ -111,4 +132,5 @@ def get_analytics_data(db: Session) -> AnalyticsData:
         ],
         avg_qualifying=_average_qualifying(qualifying_rows),
         podium_trends=_podium_trends(podium_rows),
+        driver_teams=_driver_teams(driver_team_rows),
     )
