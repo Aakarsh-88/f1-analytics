@@ -7,6 +7,14 @@ interface WinsBySeasonChartProps {
 }
 
 export function WinsBySeasonChart({ data }: WinsBySeasonChartProps) {
+  if (data.length === 0) {
+    return (
+      <div className="flex h-[260px] items-center justify-center text-sm text-[rgb(var(--text-secondary))]">
+        No season win data is available yet.
+      </div>
+    );
+  }
+
   return (
     <ResponsiveContainer width="100%" height={260}>
       <BarChart data={data} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>

@@ -41,9 +41,15 @@ export default async function DashboardPage() {
           <h2 className="font-display text-xs font-semibold uppercase tracking-wider text-[rgb(var(--text-secondary))]">
             Latest Race Podium
           </h2>
-          {stats.latestRacePodium.map((finisher) => (
-            <PodiumCard key={finisher.position} finisher={finisher} />
-          ))}
+          {stats.latestRacePodium.length > 0 ? (
+            stats.latestRacePodium.map((finisher) => (
+              <PodiumCard key={finisher.position} finisher={finisher} />
+            ))
+          ) : (
+            <p className="py-8 text-sm text-[rgb(var(--text-secondary))]">
+              No podium data is available yet.
+            </p>
+          )}
         </div>
       </div>
     </div>
