@@ -7,13 +7,16 @@ export interface SavedView {
   name: string;
   fromYear: number;
   toYear: number;
+  selectedIds?: string[];
   createdAt: string;
 }
 
-function storageKeyFor(userId: string): string {
+function storageKeyFor(userId: string, namespace: string): string {
   // Namespaced per Clerk user ID so saved views never leak across
   // accounts on a shared browser/machine.
-  return `f1-analytics:saved-views:${userId}`;
+  return namespace === "default"
+    ? `f1-analytics:saved-views:${userId}`
+    : `f1-analytics:saved-views:${namespace}:${userId}`;
 }
 
 /**
@@ -29,7 +32,7 @@ function storageKeyFor(userId: string): string {
  * out — the hook simply returns an empty, read-only view list rather
  * than throwing, so callers don't need to guard every call site.
  */
-export function useSavedViews(userId: string | null) {
+export function useSavedViews(userId: string | null, namespace = "default") {
   const [mounted, setMounted] = useState(false);
   const [views, setViews] = useState<SavedView[]>([]);
 
@@ -45,18 +48,18 @@ export function useSavedViews(userId: string | null) {
       return;
     }
     try {
-      const raw = window.localStorage.getItem(storageKeyFor(userId));
+      const raw = window.localStorage.getItem(storageKeyFor(userId, namespace));
       setViews(raw ? (JSON.parse(raw) as SavedView[]) : []);
     } catch {
       setViews([]);
     }
-  }, [mounted, userId]);
+  }, [mounted, userId, namespace]);
 
   function persist(next: SavedView[]) {
     setViews(next);
     if (!userId) return;
     try {
-      window.localStorage.setItem(storageKeyFor(userId), JSON.stringify(next));
+      window.localStorage.setItem(storageKeyFor(userId, namespace), JSON.stringify(next));
     } catch {
       // Storage can fail (quota, private browsing) — the in-memory
       // state above still updates for this session, so the UI stays
@@ -64,13 +67,14 @@ export function useSavedViews(userId: string | null) {
     }
   }
 
-  function saveView(name: string, fromYear: number, toYear: number) {
+  function saveView(name: string, fromYear: number, toYear: number, selectedIds?: string[]) {
     if (!userId) return;
     const newView: SavedView = {
       id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : String(Date.now()),
       name,
       fromYear,
       toYear,
+      ...(selectedIds ? { selectedIds } : {}),
       createdAt: new Date().toISOString(),
     };
     persist([newView, ...views]);

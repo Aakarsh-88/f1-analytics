@@ -154,6 +154,9 @@ class TestAnalyticsApi:
             "fastestLapLeaderboard",
             "avgQualifying",
             "podiumTrends",
+            "raceWins",
+            "avgFinishing",
+            "podiumPercentage",
             "driverTeams",
         }
 

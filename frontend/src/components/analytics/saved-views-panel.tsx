@@ -8,9 +8,12 @@ import { useSavedViews } from "@/hooks/use-saved-views";
 import { SignedIn, SignedOut, useAuthUser } from "@/lib/auth";
 
 interface SavedViewsPanelProps {
+  namespace?: string;
+  title?: string;
   fromYear: number;
   toYear: number;
-  onLoadView: (fromYear: number, toYear: number) => void;
+  selectedIds?: string[];
+  onLoadView: (fromYear: number, toYear: number, selectedIds?: string[]) => void;
 }
 
 /**
@@ -29,7 +32,7 @@ export function SavedViewsPanel(props: SavedViewsPanelProps) {
       <div className="mb-3 flex items-center gap-2">
         <Bookmark size={16} className="text-[rgb(var(--text-secondary))]" />
         <h3 className="font-display text-xs font-semibold uppercase tracking-wider text-[rgb(var(--text-secondary))]">
-          Saved Views
+          {props.title ?? "Saved Views"}
         </h3>
       </div>
 
@@ -45,15 +48,15 @@ export function SavedViewsPanel(props: SavedViewsPanelProps) {
   );
 }
 
-function SavedViewsAuthenticated({ fromYear, toYear, onLoadView }: SavedViewsPanelProps) {
+function SavedViewsAuthenticated({ namespace = "default", fromYear, toYear, selectedIds, onLoadView }: SavedViewsPanelProps) {
   const { user } = useAuthUser();
-  const { views, mounted, saveView, deleteView } = useSavedViews(user?.id ?? null);
+  const { views, mounted, saveView, deleteView } = useSavedViews(user?.id ?? null, namespace);
   const [name, setName] = useState("");
 
   function handleSave() {
     const trimmed = name.trim();
     if (!trimmed) return;
-    saveView(trimmed, fromYear, toYear);
+    saveView(trimmed, fromYear, toYear, selectedIds);
     setName("");
   }
 
@@ -92,7 +95,10 @@ function SavedViewsAuthenticated({ fromYear, toYear, onLoadView }: SavedViewsPan
             >
               <button
                 type="button"
-                onClick={() => onLoadView(view.fromYear, view.toYear)}
+                onClick={() => {
+                  if (view.selectedIds) onLoadView(view.fromYear, view.toYear, view.selectedIds);
+                  else onLoadView(view.fromYear, view.toYear);
+                }}
                 className="text-left font-medium hover:text-f1-red"
               >
                 {view.name}

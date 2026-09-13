@@ -77,6 +77,19 @@ describe("SavedViewsPanel", () => {
     expect(onLoadView).toHaveBeenCalledWith(2022, 2024);
   });
 
+  it("calls onLoadView with saved selections and range", async () => {
+    const user = userEvent.setup();
+    const onLoadView = jest.fn();
+    render(<SavedViewsPanel namespace="constructors" fromYear={2014} toYear={2024} selectedIds={["mercedes", "ferrari"]} onLoadView={onLoadView} />);
+
+    await screen.findByPlaceholderText(/rivalry/i);
+    await user.type(screen.getByPlaceholderText(/rivalry/i), "Historic Teams");
+    await user.click(screen.getByRole("button", { name: /save 2014–2024/i }));
+    await user.click(await screen.findByText("Historic Teams"));
+
+    expect(onLoadView).toHaveBeenCalledWith(2014, 2024, ["mercedes", "ferrari"]);
+  });
+
   it("deletes a saved view", async () => {
     const user = userEvent.setup();
     render(<SavedViewsPanel fromYear={2021} toYear={2023} onLoadView={jest.fn()} />);

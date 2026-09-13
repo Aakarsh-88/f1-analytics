@@ -11,7 +11,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { getDriverColor, getDriverSeasonColor } from "@/lib/analytics-driver-colors";
+import { getDistinctDriverColors } from "@/lib/analytics-driver-colors";
 import type { DriverTeamPoint } from "@/types/analytics";
 import type { PodiumTrendPoint } from "@/types/analytics";
 
@@ -22,6 +22,8 @@ interface PodiumTrendsChartProps {
 }
 
 export function PodiumTrendsChart({ points, driverCodes, driverTeams }: PodiumTrendsChartProps) {
+  const driverColors = getDistinctDriverColors(driverTeams, driverCodes);
+
   return (
     <ResponsiveContainer width="100%" height={280} minWidth={1}>
       <LineChart data={points} margin={{ top: 8, right: 16, left: -8, bottom: 0 }}>
@@ -55,17 +57,9 @@ export function PodiumTrendsChart({ points, driverCodes, driverTeams }: PodiumTr
             key={code}
             type="monotone"
             dataKey={code}
-            stroke={getDriverColor(driverTeams, code)}
+            stroke={driverColors[code]}
             strokeWidth={2}
-            dot={({ cx, cy, payload }) => (
-              <circle
-                cx={cx}
-                cy={cy}
-                r={3}
-                fill={getDriverSeasonColor(driverTeams, code, payload.season)}
-                stroke={getDriverSeasonColor(driverTeams, code, payload.season)}
-              />
-            )}
+            dot={{ r: 3 }}
           />
         ))}
       </LineChart>

@@ -18,6 +18,10 @@ class RaceSummary(CamelModel):
     circuit_name: str
     country: Optional[str]
     date: str
+    winner_driver_name: Optional[str] = None
+    winner_constructor_name: Optional[str] = None
+    winner_constructor_ref: Optional[str] = None
+    winner_constructor_abbreviation: Optional[str] = None
 
 
 class RaceResultRow(CamelModel):

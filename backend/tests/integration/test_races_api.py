@@ -154,6 +154,28 @@ def seed_races_dataset(db: Session) -> None:
 
 
 class TestRacesApi:
+    def test_season_filter_returns_ascending_rounds_and_winner_metadata(
+        self, db_session, client_with_db
+    ):
+        seed_races_dataset(db_session)
+
+        response = client_with_db.get("/api/v1/races", params={"season": 2023})
+
+        assert response.status_code == 200
+        body = response.json()
+        assert [race["round"] for race in body] == [1, 2]
+        assert body[0]["winnerDriverName"] == "Max Verstappen"
+        assert body[0]["winnerConstructorAbbreviation"] == "RBR"
+        assert body[1].get("winnerDriverName") is None
+
+    def test_season_without_results_marks_race_winner_as_na_data(self, db_session, client_with_db):
+        seed_races_dataset(db_session)
+
+        response = client_with_db.get("/api/v1/races", params={"season": 2022})
+
+        assert response.status_code == 200
+        assert response.json()[0].get("winnerDriverName") is None
+
     def test_list_returns_summaries_in_newest_year_round_order(self, db_session, client_with_db):
         seed_races_dataset(db_session)
 

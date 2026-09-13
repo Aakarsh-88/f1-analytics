@@ -12,7 +12,7 @@ export default async function DriversPage() {
       <div>
         <h1 className="font-display text-2xl font-bold">Drivers</h1>
         <p className="mt-1 text-sm text-[rgb(var(--text-secondary))]">
-          {drivers.length} drivers · career wins, podiums, and championships.
+          {drivers.length} drivers · Career wins, podiums, and championships.
         </p>
       </div>
 

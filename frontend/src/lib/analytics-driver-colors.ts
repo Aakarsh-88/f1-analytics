@@ -1,4 +1,5 @@
 import type { DriverTeamPoint } from "@/types/analytics";
+import { getDistinctComparisonColors } from "@/lib/comparison-colors";
 
 export const DEFAULT_ANALYTICS_DRIVER_COLOR = "#6B7280";
 
@@ -26,4 +27,25 @@ export function getDriverColor(driverTeams: DriverTeamPoint[], driverCode: strin
     [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] ??
     DEFAULT_ANALYTICS_DRIVER_COLOR
   );
+}
+
+export function getDistinctDriverColors(
+  driverTeams: DriverTeamPoint[],
+  driverCodes: string[]
+): Record<string, string> {
+  const preferredColors = Object.fromEntries(
+    driverCodes.map((code) => [code, getDriverColor(driverTeams, code)])
+  );
+  return getDistinctComparisonColors(driverCodes, preferredColors);
+}
+
+export function getDistinctDriverSeasonColors(
+  driverTeams: DriverTeamPoint[],
+  driverCodes: string[],
+  season: number
+): Record<string, string> {
+  const preferredColors = Object.fromEntries(
+    driverCodes.map((code) => [code, getDriverSeasonColor(driverTeams, code, season)])
+  );
+  return getDistinctComparisonColors(driverCodes, preferredColors);
 }

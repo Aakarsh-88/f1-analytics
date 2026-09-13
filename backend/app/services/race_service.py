@@ -1,6 +1,6 @@
 """Race business logic and response mapping."""
 
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
@@ -16,7 +16,23 @@ from app.schemas.race import (
 from app.utils.exceptions import NotFoundException
 
 
+def _constructor_abbreviation(name: str, constructor_ref: str) -> str:
+    words = [word for word in name.replace("-", " ").split() if word]
+    if len(words) >= 3:
+        abbreviation = "".join(word[0] for word in words)
+    elif len(words) == 2:
+        abbreviation = "".join(word[0] for word in words) + words[-1][1:2]
+    else:
+        abbreviation = name[:3]
+    abbreviation = "".join(character for character in abbreviation.upper() if character.isalpha())
+    return (abbreviation + constructor_ref.upper())[:3]
+
+
 def _race_summary(race) -> RaceSummary:
+    winner = next(
+        (result for result in race.results if result.position_order == 1),
+        None,
+    )
     return RaceSummary(
         race_id=race.race_id,
         year=race.year,
@@ -25,11 +41,19 @@ def _race_summary(race) -> RaceSummary:
         circuit_name=race.circuit.name if race.circuit else "",
         country=race.circuit.country if race.circuit else None,
         date=race.date.isoformat() if race.date else "",
+        winner_driver_name=winner.driver.full_name if winner else None,
+        winner_constructor_name=winner.constructor.name if winner else None,
+        winner_constructor_ref=winner.constructor.constructor_ref if winner else None,
+        winner_constructor_abbreviation=(
+            _constructor_abbreviation(winner.constructor.name, winner.constructor.constructor_ref)
+            if winner
+            else None
+        ),
     )
 
 
-def list_races(db: Session) -> List[RaceSummary]:
-    return [_race_summary(race) for race in race_repository.list_races(db)]
+def list_races(db: Session, season: Optional[int] = None) -> List[RaceSummary]:
+    return [_race_summary(race) for race in race_repository.list_races(db, season)]
 
 
 def get_race_detail(db: Session, race_id: int) -> RaceDetail:

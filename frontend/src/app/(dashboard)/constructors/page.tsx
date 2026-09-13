@@ -12,7 +12,7 @@ export default async function ConstructorsPage() {
       <div>
         <h1 className="font-display text-2xl font-bold">Constructors</h1>
         <p className="mt-1 text-sm text-[rgb(var(--text-secondary))]">
-          {constructors.length} teams · championship history and recent form.
+          {constructors.length} teams · Championship history and recent form.
         </p>
       </div>
 

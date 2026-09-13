@@ -90,6 +90,20 @@ def get_top_drivers_for_progression(db: Session, last_race_id: int, top_n: int) 
     return db.execute(stmt).all()
 
 
+def get_top_constructors_for_progression(
+    db: Session, last_race_id: int, top_n: int
+) -> List[Tuple[int, str]]:
+    """Returns (constructor_id, constructor_ref) in final position order."""
+    stmt = (
+        select(ConstructorStanding.constructor_id, Constructor.constructor_ref)
+        .join(Constructor, Constructor.constructor_id == ConstructorStanding.constructor_id)
+        .where(ConstructorStanding.race_id == last_race_id)
+        .order_by(ConstructorStanding.position)
+        .limit(top_n)
+    )
+    return db.execute(stmt).all()
+
+
 def get_progression_rows(db: Session, season: int, driver_ids: List[int]) -> List[Tuple[Race, int, float]]:
     """
     Every (race, driver_id, points) tuple for the given drivers across
@@ -114,4 +128,36 @@ def get_progression_rows(db: Session, season: int, driver_ids: List[int]) -> Lis
         (races_by_id[race_id], driver_id, points_by_key.get((race_id, driver_id), 0.0))
         for race_id in race_ids
         for driver_id in driver_ids
+    ]
+
+
+def get_constructor_progression_rows(
+    db: Session, season: int, constructor_ids: List[int]
+) -> List[Tuple[Race, int, float]]:
+    """Every (race, constructor_id, points) tuple for the selected constructors."""
+    races = db.execute(select(Race).where(Race.year == season).order_by(Race.round)).scalars().all()
+    race_ids = [race.race_id for race in races]
+
+    if not constructor_ids or not race_ids:
+        return [(race, constructor_id, 0.0) for race in races for constructor_id in constructor_ids]
+
+    standings = db.execute(
+        select(
+            ConstructorStanding.race_id,
+            ConstructorStanding.constructor_id,
+            ConstructorStanding.points,
+        ).where(
+            ConstructorStanding.race_id.in_(race_ids),
+            ConstructorStanding.constructor_id.in_(constructor_ids),
+        )
+    ).all()
+    points_by_key = {
+        (race_id, constructor_id): float(points)
+        for race_id, constructor_id, points in standings
+    }
+    races_by_id = {race.race_id: race for race in races}
+    return [
+        (races_by_id[race_id], constructor_id, points_by_key.get((race_id, constructor_id), 0.0))
+        for race_id in race_ids
+        for constructor_id in constructor_ids
     ]

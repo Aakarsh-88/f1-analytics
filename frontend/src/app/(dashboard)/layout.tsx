@@ -15,7 +15,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     <div className="flex min-h-screen bg-[rgb(var(--surface-bg))]">
       <Sidebar seasonRange={seasonRange} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopNav searchIndex={searchIndex} seasonRange={seasonRange} />
+        <TopNav searchIndex={searchIndex} />
         <main className="flex-1 p-6">{children}</main>
       </div>
     </div>

@@ -33,6 +33,21 @@ describe("useSavedViews", () => {
     expect(JSON.parse(raw!)).toHaveLength(1);
   });
 
+  it("persists selected entity IDs with a view", async () => {
+    const { result } = renderHook(() => useSavedViews("user_123", "drivers"));
+    await waitFor(() => expect(result.current.mounted).toBe(true));
+
+    act(() => {
+      result.current.saveView("Hamilton and Verstappen", 2014, 2024, ["HAM", "VER"]);
+    });
+
+    expect(result.current.views[0]).toMatchObject({
+      selectedIds: ["HAM", "VER"],
+    });
+    expect(JSON.parse(window.localStorage.getItem("f1-analytics:saved-views:drivers:user_123")!)[0].selectedIds)
+      .toEqual(["HAM", "VER"]);
+  });
+
   it("namespaces saved views per user ID", async () => {
     const { result: userA } = renderHook(() => useSavedViews("user_a"));
     await waitFor(() => expect(userA.current.mounted).toBe(true));

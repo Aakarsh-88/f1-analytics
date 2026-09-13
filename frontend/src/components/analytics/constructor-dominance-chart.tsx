@@ -12,6 +12,7 @@ import {
 } from "recharts";
 
 import type { ConstructorDominancePoint, ConstructorMeta } from "@/types/analytics";
+import { getDistinctComparisonColors } from "@/lib/comparison-colors";
 
 const TEAM_LINE_COLORS: Record<string, string> = {
   mercedes: "#27F4D2",
@@ -26,6 +27,13 @@ interface ConstructorDominanceChartProps {
 }
 
 export function ConstructorDominanceChart({ points, constructors }: ConstructorDominanceChartProps) {
+  const constructorColors = getDistinctComparisonColors(
+    constructors.map((constructor) => constructor.ref),
+    Object.fromEntries(
+      constructors.map((constructor) => [constructor.ref, TEAM_LINE_COLORS[constructor.ref]])
+    )
+  );
+
   return (
     <ResponsiveContainer width="100%" height={280} minWidth={1}>
       <LineChart data={points} margin={{ top: 8, right: 16, left: -8, bottom: 0 }}>
@@ -59,7 +67,7 @@ export function ConstructorDominanceChart({ points, constructors }: ConstructorD
             type="monotone"
             dataKey={c.ref}
             name={c.name}
-            stroke={TEAM_LINE_COLORS[c.ref] ?? "#9B5DE5"}
+            stroke={constructorColors[c.ref]}
             strokeWidth={2}
             dot={{ r: 3 }}
           />

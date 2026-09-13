@@ -2,7 +2,7 @@
 
 from typing import Optional, Sequence, Tuple
 
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
 from app.models.constructor import Constructor
@@ -102,6 +102,49 @@ def get_podium_trends(db: Session) -> Sequence:
         .join(Result, Result.race_id == Race.race_id)
         .join(Driver, Driver.driver_id == Result.driver_id)
         .where(Result.position.in_([1, 2, 3]))
+        .group_by(Race.year, Driver.driver_id, Driver.code, Driver.driver_ref)
+        .order_by(Race.year, driver_code)
+    )
+    return db.execute(stmt).all()
+
+
+def get_race_wins(db: Session) -> Sequence:
+    driver_code = func.coalesce(Driver.code, Driver.driver_ref).label("driver_code")
+    stmt = (
+        select(Race.year, driver_code, func.count().label("wins"))
+        .join(Result, Result.race_id == Race.race_id)
+        .join(Driver, Driver.driver_id == Result.driver_id)
+        .where(Result.position == 1)
+        .group_by(Race.year, Driver.driver_id, Driver.code, Driver.driver_ref)
+        .order_by(Race.year, driver_code)
+    )
+    return db.execute(stmt).all()
+
+
+def get_average_finishing(db: Session) -> Sequence:
+    driver_code = func.coalesce(Driver.code, Driver.driver_ref).label("driver_code")
+    stmt = (
+        select(Race.year, driver_code, func.avg(Result.position).label("average_position"))
+        .join(Result, Result.race_id == Race.race_id)
+        .join(Driver, Driver.driver_id == Result.driver_id)
+        .where(Result.position.is_not(None))
+        .group_by(Race.year, Driver.driver_id, Driver.code, Driver.driver_ref)
+        .order_by(Race.year, driver_code)
+    )
+    return db.execute(stmt).all()
+
+
+def get_podium_percentage(db: Session) -> Sequence:
+    driver_code = func.coalesce(Driver.code, Driver.driver_ref).label("driver_code")
+    podiums = func.sum(case((Result.position.in_([1, 2, 3]), 1), else_=0))
+    stmt = (
+        select(
+            Race.year,
+            driver_code,
+            (podiums * 100.0 / func.nullif(func.count(Result.result_id), 0)).label("percentage"),
+        )
+        .join(Result, Result.race_id == Race.race_id)
+        .join(Driver, Driver.driver_id == Result.driver_id)
         .group_by(Race.year, Driver.driver_id, Driver.code, Driver.driver_ref)
         .order_by(Race.year, driver_code)
     )

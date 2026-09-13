@@ -38,6 +38,16 @@ export interface PodiumTrendPoint {
   [driverCode: string]: number | string;
 }
 
+export interface DriverSeriesPoint {
+  season: number;
+  [driverCode: string]: number | string;
+}
+
+export interface DriverSeries {
+  driverCodes: string[];
+  points: DriverSeriesPoint[];
+}
+
 export interface DriverTeamConstructor {
   ref: string;
   name: string;
@@ -66,5 +76,8 @@ export interface AnalyticsData {
     points: PodiumTrendPoint[];
     driverCodes: string[];
   };
+  raceWins: DriverSeries;
+  avgFinishing: DriverSeries;
+  podiumPercentage: DriverSeries;
   driverTeams: DriverTeamPoint[];
 }

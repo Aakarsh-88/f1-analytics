@@ -34,10 +34,8 @@ const MAX_RESULTS = 8;
 
 export function TopNav({
   searchIndex,
-  seasonRange,
 }: {
   searchIndex: SearchItem[];
-  seasonRange?: { min: number; max: number };
 }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -135,37 +133,20 @@ export function TopNav({
       </div>
 
       <div className="flex items-center gap-4">
-  {seasonRange && (
-    <select
-      aria-label="Season"
-      defaultValue={String(seasonRange.max)}
-      className="rounded-md border border-line bg-[rgb(var(--surface-elevated))] px-3 py-2 text-sm font-medium text-[rgb(var(--text-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-f1-red"
-    >
-      {Array.from(
-        { length: Math.min(10, seasonRange.max - seasonRange.min + 1) },
-        (_, i) => seasonRange.max - i
-      ).map((year) => (
-        <option key={year} value={year}>
-          {year} Season
-        </option>
-      ))}
-    </select>
-  )}
+        <ThemeToggle />
 
-  <ThemeToggle />
+        <SignedOut>
+          <SignInButton mode="modal">
+            <button className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
+              Sign In
+            </button>
+          </SignInButton>
+        </SignedOut>
 
-  <SignedOut>
-    <SignInButton mode="modal">
-      <button className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
-        Sign In
-      </button>
-    </SignInButton>
-  </SignedOut>
-
-  <SignedIn>
-    <UserButton afterSignOutUrl="/" />
-  </SignedIn>
-</div>
+        <SignedIn>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
+      </div>
     </header>
   );
 }

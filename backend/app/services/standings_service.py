@@ -44,6 +44,31 @@ def _build_progression(db: Session, season: int, last_race_id: int) -> tuple[Lis
     return progression, driver_codes_in_order
 
 
+def _build_constructor_progression(
+    db: Session, season: int, last_race_id: int
+) -> tuple[List[dict], List[str]]:
+    top_constructors = standings_repository.get_top_constructors_for_progression(
+        db, last_race_id, PROGRESSION_TOP_N
+    )
+    if not top_constructors:
+        return [], []
+
+    constructor_ids = [constructor[0] for constructor in top_constructors]
+    constructor_refs = [constructor[1] for constructor in top_constructors]
+    rows = standings_repository.get_constructor_progression_rows(db, season, constructor_ids)
+
+    progression_by_round: dict = {}
+    for race, constructor_id, points in rows:
+        entry = progression_by_round.setdefault(
+            race.round, {"round": race.round, "raceName": race.name}
+        )
+        constructor_ref = constructor_refs[constructor_ids.index(constructor_id)]
+        entry[constructor_ref] = points
+
+    progression = [progression_by_round[r] for r in sorted(progression_by_round.keys())]
+    return progression, constructor_refs
+
+
 def get_standings_data(db: Session, season: Optional[int]) -> dict:
     if season is None:
         season = standings_repository.get_latest_season(db)
@@ -57,6 +82,9 @@ def get_standings_data(db: Session, season: Optional[int]) -> dict:
     driver_rows = standings_repository.get_driver_standings_rows(db, last_race.race_id)
     constructor_rows = standings_repository.get_constructor_standings_rows(db, last_race.race_id)
     progression, progression_driver_codes = _build_progression(db, season, last_race.race_id)
+    constructor_progression, progression_constructor_refs = _build_constructor_progression(
+        db, season, last_race.race_id
+    )
 
     return {
         "season": season,
@@ -84,4 +112,6 @@ def get_standings_data(db: Session, season: Optional[int]) -> dict:
         ],
         "progression": progression,
         "progression_driver_codes": progression_driver_codes,
+        "constructor_progression": constructor_progression,
+        "progression_constructor_refs": progression_constructor_refs,
     }

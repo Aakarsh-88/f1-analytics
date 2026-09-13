@@ -8,13 +8,14 @@ function apiUrl(path: string): string {
   return `${API_BASE_URL?.replace(/\/$/, "") ?? ""}/api/v1${path}`;
 }
 
-export async function getRaces(): Promise<RaceSummary[]> {
-  const response = await fetch(apiUrl("/races"), {
+export async function getRaces(season?: number): Promise<RaceSummary[]> {
+  const query = season === undefined ? "" : `?season=${encodeURIComponent(season)}`;
+  const response = await fetch(`${apiUrl("/races")}${query}`, {
     next: { revalidate: 300 },
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to load races (${response.status})`);
+    throw new Error(`Failed to load races${season === undefined ? "" : ` for ${season}`} (${response.status})`);
   }
 
   return response.json();

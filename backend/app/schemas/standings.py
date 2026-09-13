@@ -41,3 +41,5 @@ class StandingsData(CamelModel):
     constructor_standings: List[ConstructorStandingRow]
     progression: List[Dict[str, Any]]
     progression_driver_codes: List[str]
+    constructor_progression: List[Dict[str, Any]]
+    progression_constructor_refs: List[str]

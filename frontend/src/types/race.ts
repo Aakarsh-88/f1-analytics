@@ -6,6 +6,10 @@ export interface RaceSummary {
   circuitName: string;
   country: string | null;
   date: string; // ISO date
+  winnerDriverName?: string | null;
+  winnerConstructorName?: string | null;
+  winnerConstructorRef?: string | null;
+  winnerConstructorAbbreviation?: string | null;
 }
 
 export interface RaceResultRow {

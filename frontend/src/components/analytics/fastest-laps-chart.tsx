@@ -2,7 +2,7 @@
 
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import { getDriverColor } from "@/lib/analytics-driver-colors";
+import { getDistinctDriverColors } from "@/lib/analytics-driver-colors";
 import type { DriverTeamPoint, FastestLapLeaderboardRow } from "@/types/analytics";
 import { Cell } from "recharts";
 
@@ -13,6 +13,11 @@ export function FastestLapsChart({
   rows: FastestLapLeaderboardRow[];
   driverTeams: DriverTeamPoint[];
 }) {
+  const driverColors = getDistinctDriverColors(
+    driverTeams,
+    rows.map((row) => row.driverCode)
+  );
+
   return (
     <ResponsiveContainer width="100%" height={240} minWidth={1}>
       <BarChart
@@ -55,7 +60,7 @@ export function FastestLapsChart({
         />
         <Bar dataKey="fastestLaps" radius={[0, 3, 3, 0]} maxBarSize={20}>
           {rows.map((row) => (
-            <Cell key={row.driverCode} fill={getDriverColor(driverTeams, row.driverCode)} />
+            <Cell key={row.driverCode} fill={driverColors[row.driverCode]} />
           ))}
         </Bar>
       </BarChart>

@@ -114,6 +114,9 @@ def get_analytics_data(db: Session) -> AnalyticsData:
     constructor_rows = analytics_repository.get_constructor_dominance(db)
     qualifying_rows = analytics_repository.get_average_qualifying(db)
     podium_rows = analytics_repository.get_podium_trends(db)
+    wins_rows = analytics_repository.get_race_wins(db)
+    finishing_rows = analytics_repository.get_average_finishing(db)
+    percentage_rows = analytics_repository.get_podium_percentage(db)
     driver_team_rows = analytics_repository.get_driver_teams(db)
 
     return AnalyticsData(
@@ -137,5 +140,22 @@ def get_analytics_data(db: Session) -> AnalyticsData:
         ],
         avg_qualifying=_average_qualifying(qualifying_rows),
         podium_trends=_podium_trends(podium_rows),
+        race_wins=_driver_series(wins_rows, integer=True),
+        avg_finishing=_driver_series(finishing_rows),
+        podium_percentage=_driver_series(percentage_rows),
         driver_teams=_driver_teams(driver_team_rows),
+    )
+
+
+def _driver_series(rows, integer: bool = False):
+    points_by_season: Dict[int, Dict[str, float]] = defaultdict(dict)
+    driver_codes = set()
+    for row in rows:
+        season, driver_code, value = row
+        driver_codes.add(driver_code)
+        points_by_season[season][driver_code] = int(value or 0) if integer else round(float(value or 0), 2)
+    from app.schemas.analytics import DriverSeries, DriverSeriesPoint
+    return DriverSeries(
+        driver_codes=sorted(driver_codes),
+        points=[DriverSeriesPoint(season=season, **values) for season, values in sorted(points_by_season.items())],
     )

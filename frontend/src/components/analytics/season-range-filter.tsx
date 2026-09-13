@@ -7,9 +7,10 @@ interface SeasonRangeFilterProps {
   fromYear: number;
   toYear: number;
   onChange: (fromYear: number, toYear: number) => void;
+  labelPrefix?: string;
 }
 
-export function SeasonRangeFilter({ range, fromYear, toYear, onChange }: SeasonRangeFilterProps) {
+export function SeasonRangeFilter({ range, fromYear, toYear, onChange, labelPrefix = "" }: SeasonRangeFilterProps) {
   const years = Array.from(
     { length: range.max - range.min + 1 },
     (_, i) => range.min + i
@@ -21,6 +22,7 @@ export function SeasonRangeFilter({ range, fromYear, toYear, onChange }: SeasonR
         From
         <select
           value={fromYear}
+          aria-label={`${labelPrefix}From`}
           onChange={(e) => {
             const next = Number(e.target.value);
             onChange(Math.min(next, toYear), toYear);
@@ -39,6 +41,7 @@ export function SeasonRangeFilter({ range, fromYear, toYear, onChange }: SeasonR
         To
         <select
           value={toYear}
+          aria-label={`${labelPrefix}To`}
           onChange={(e) => {
             const next = Number(e.target.value);
             onChange(fromYear, Math.max(next, fromYear));

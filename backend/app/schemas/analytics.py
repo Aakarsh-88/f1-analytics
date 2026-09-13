@@ -77,6 +77,17 @@ class PodiumTrends(CamelModel):
     points: List[PodiumTrendPoint]
 
 
+class DriverSeriesPoint(CamelModel):
+    season: int
+    model_config = ConfigDict(extra="allow")
+    __pydantic_extra__: dict[str, float] = Field(init=False)
+
+
+class DriverSeries(CamelModel):
+    driver_codes: List[str]
+    points: List[DriverSeriesPoint]
+
+
 class DriverTeamInfo(CamelModel):
     ref: str
     name: str
@@ -96,4 +107,7 @@ class AnalyticsData(CamelModel):
     fastest_lap_leaderboard: List[FastestLapLeaderboardRow]
     avg_qualifying: AvgQualifying
     podium_trends: PodiumTrends
+    race_wins: DriverSeries
+    avg_finishing: DriverSeries
+    podium_percentage: DriverSeries
     driver_teams: List[DriverTeamPoint]

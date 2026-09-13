@@ -35,6 +35,11 @@ jest.mock("@/components/analytics/podium-trends-chart", () => ({
     <div data-testid="podium-trends-chart">{JSON.stringify(props.points)}</div>
   ),
 }));
+jest.mock("@/components/analytics/driver-series-chart", () => ({
+  DriverSeriesChart: (props: { points: unknown; title: string }) => (
+    <div data-testid={`driver-series-${props.title}`}>{JSON.stringify(props.points)}</div>
+  ),
+}));
 jest.mock("@/components/analytics/saved-views-panel", () => ({
   SavedViewsPanel: () => <div data-testid="saved-views-panel" />,
 }));
@@ -73,45 +78,50 @@ const mockData: AnalyticsData = {
       { season: 2025, VER: 10 },
     ],
   },
+  raceWins: { driverCodes: ["VER"], points: [{ season: 2021, VER: 1 }] },
+  avgFinishing: { driverCodes: ["VER"], points: [{ season: 2021, VER: 2 }] },
+  podiumPercentage: { driverCodes: ["VER"], points: [{ season: 2021, VER: 50 }] },
+  driverTeams: [],
 };
 
 describe("AnalyticsDashboard filtering", () => {
-  it("passes the full unfiltered dataset to season-indexed charts by default", () => {
+  it("uses the default 2014–2024 range for constructor analytics", () => {
     render(<AnalyticsDashboard data={mockData} />);
 
     const dominance = JSON.parse(screen.getByTestId("dominance-chart").textContent!);
-    expect(dominance).toHaveLength(5);
+    expect(dominance.map((p: { season: number }) => p.season)).toEqual([2021, 2022, 2023, 2024]);
   });
 
-  it("passes the ENTIRE leaderboard data to the all-time charts regardless of season range", async () => {
+  it("keeps driver range controls independent from constructor range controls", async () => {
     const user = userEvent.setup();
     render(<AnalyticsDashboard data={mockData} />);
 
-    await user.selectOptions(screen.getByLabelText("From"), "2024");
+    await user.selectOptions(screen.getByLabelText("Driver From"), "2024");
 
     const poles = JSON.parse(screen.getByTestId("poles-chart").textContent!);
     expect(poles).toEqual(mockData.poleLeaderboard);
+    expect(screen.getByLabelText("Constructor From")).toHaveValue("2021");
   });
 
   it("filters season-indexed chart data when the range narrows", async () => {
     const user = userEvent.setup();
     render(<AnalyticsDashboard data={mockData} />);
 
-    await user.selectOptions(screen.getByLabelText("From"), "2023");
-    await user.selectOptions(screen.getByLabelText("To"), "2024");
+    await user.selectOptions(screen.getByLabelText("Driver From"), "2023");
+    await user.selectOptions(screen.getByLabelText("Driver To"), "2024");
 
     const dominance = JSON.parse(screen.getByTestId("dominance-chart").textContent!);
-    expect(dominance.map((p: { season: number }) => p.season)).toEqual([2023, 2024]);
+    expect(dominance.map((p: { season: number }) => p.season)).toEqual([2021, 2022, 2023, 2024]);
 
     const avgQualifying = JSON.parse(screen.getByTestId("avg-qualifying-chart").textContent!);
     expect(avgQualifying.map((p: { season: number }) => p.season)).toEqual([2023, 2024]);
 
-    const podiumTrends = JSON.parse(screen.getByTestId("podium-trends-chart").textContent!);
+    const podiumTrends = JSON.parse(screen.getByTestId("driver-series-Podiums").textContent!);
     expect(podiumTrends.map((p: { season: number }) => p.season)).toEqual([2023, 2024]);
   });
 
   it("passes the current season range to SavedViewsPanel", () => {
     render(<AnalyticsDashboard data={mockData} />);
-    expect(screen.getByTestId("saved-views-panel")).toBeInTheDocument();
+    expect(screen.getAllByTestId("saved-views-panel")).toHaveLength(2);
   });
 });

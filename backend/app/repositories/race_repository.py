@@ -10,7 +10,7 @@ import math
 from typing import Optional, Sequence
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.models.lap_time import LapTime
 from app.models.pit_stop import PitStop
@@ -70,9 +70,21 @@ def get_race_results(db: Session, race_id: int) -> Sequence[Result]:
     return db.execute(stmt).scalars().all()
 
 
-def list_races(db: Session) -> Sequence[Race]:
-    """Return all races, newest season and round first."""
-    stmt = select(Race).order_by(Race.year.desc(), Race.round.desc(), Race.race_id.desc())
+def list_races(db: Session, season: Optional[int] = None) -> Sequence[Race]:
+    """Return races, optionally scoped to a season, with winners eagerly loaded."""
+    stmt = select(Race).options(joinedload(Race.circuit)).order_by(
+        Race.year.desc(), Race.round.desc(), Race.race_id.desc()
+    )
+    if season is not None:
+        stmt = (
+            stmt.where(Race.year == season)
+            .order_by(None)
+            .order_by(Race.round.asc(), Race.race_id.asc())
+            .options(
+                selectinload(Race.results).joinedload(Result.driver),
+                selectinload(Race.results).joinedload(Result.constructor),
+            )
+        )
     return db.execute(stmt).scalars().all()
 
 

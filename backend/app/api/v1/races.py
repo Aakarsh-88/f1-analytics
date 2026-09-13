@@ -7,7 +7,7 @@ Races API.
 
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from app.api.deps import DbSession
 from app.schemas.race import RaceDetail, RaceSummary
@@ -19,10 +19,14 @@ router = APIRouter(prefix="/races", tags=["races"])
 @router.get(
     "",
     response_model=List[RaceSummary],
-    summary="List all races ordered from newest to oldest",
+    response_model_exclude_none=True,
+    summary="List races, optionally filtered to a season",
 )
-def list_races(db: DbSession) -> List[RaceSummary]:
-    return race_service.list_races(db)
+def list_races(
+    db: DbSession,
+    season: int | None = Query(default=None, description="Season year"),
+) -> List[RaceSummary]:
+    return race_service.list_races(db, season)
 
 
 @router.get(
