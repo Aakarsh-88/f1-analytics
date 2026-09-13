@@ -99,11 +99,13 @@ export function LapTimeChart({
         <Tooltip
           contentStyle={{
             backgroundColor: "rgb(var(--surface-elevated))",
+            color: "rgb(var(--text-primary))",
             border: "1px solid rgb(var(--surface-border))",
             borderRadius: 6,
             fontSize: 12,
             fontFamily: "var(--font-mono)",
           }}
+          itemStyle={{ color: "rgb(var(--text-primary))" }}
           labelFormatter={(lap) => `Lap ${lap}`}
           formatter={(value, name) => {
             if (typeof value === "number") {

@@ -39,11 +39,13 @@ export function FastestLapsChart({
           cursor={{ fill: "rgba(0,217,126,0.08)" }}
           contentStyle={{
             backgroundColor: "rgb(var(--surface-elevated))",
+            color: "rgb(var(--text-primary))",
             border: "1px solid rgb(var(--surface-border))",
             borderRadius: 6,
             fontSize: 12,
             fontFamily: "var(--font-mono)",
           }}
+          itemStyle={{ color: "rgb(var(--text-primary))" }}
           formatter={(value, name) => [
   typeof value === "number"
     ? `${value} fastest laps`

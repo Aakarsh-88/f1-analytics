@@ -44,11 +44,13 @@ export function ProgressionChart({ data, driverCodes }: ProgressionChartProps) {
         <Tooltip
           contentStyle={{
             backgroundColor: "rgb(var(--surface-elevated))",
+            color: "rgb(var(--text-primary))",
             border: "1px solid rgb(var(--surface-border))",
             borderRadius: 6,
             fontSize: 12,
             fontFamily: "var(--font-mono)",
           }}
+          itemStyle={{ color: "rgb(var(--text-primary))" }}
         />
         <Legend wrapperStyle={{ fontSize: 12, fontFamily: "var(--font-mono)" }} />
         {driverCodes.map((code) => (
