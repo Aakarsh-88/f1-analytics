@@ -3,6 +3,9 @@ import { getConstructors } from "@/lib/api/constructors";
 
 export default async function ConstructorsPage() {
   const constructors = await getConstructors();
+  const sortedConstructors = [...constructors].sort(
+    (a, b) => b.championships - a.championships || b.wins - a.wins
+  );
 
   return (
     <div className="space-y-6">
@@ -13,7 +16,7 @@ export default async function ConstructorsPage() {
         </p>
       </div>
 
-      <ConstructorsGrid constructors={constructors} />
+      <ConstructorsGrid constructors={sortedConstructors} />
     </div>
   );
 }

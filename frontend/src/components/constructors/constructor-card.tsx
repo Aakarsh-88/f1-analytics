@@ -17,9 +17,9 @@ export function ConstructorCard({ constructor: c }: { constructor: ConstructorSu
       </div>
 
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+        <Stat label="Titles" value={c.championships} />
         <Stat label="Wins" value={c.wins} />
         <Stat label="Podiums" value={c.podiums} />
-        <Stat label="Titles" value={c.championships} />
       </div>
 
       <div className="mt-4 border-t border-line pt-3">

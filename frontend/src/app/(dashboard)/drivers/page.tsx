@@ -3,6 +3,9 @@ import { getDrivers } from "@/lib/api/drivers";
 
 export default async function DriversPage() {
   const drivers = await getDrivers();
+  const sortedDrivers = [...drivers].sort(
+    (a, b) => b.championships - a.championships || b.wins - a.wins
+  );
 
   return (
     <div className="space-y-6">
@@ -13,7 +16,7 @@ export default async function DriversPage() {
         </p>
       </div>
 
-      <DriversGrid drivers={drivers} />
+      <DriversGrid drivers={sortedDrivers} />
     </div>
   );
 }
