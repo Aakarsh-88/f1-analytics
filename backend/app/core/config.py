@@ -92,7 +92,7 @@ class Settings(BaseSettings):
         parsed_database_url = urlparse(self.database_url)
         if (
             not self.database_url.strip()
-            or parsed_database_url.scheme not in {"postgresql", "postgresql+psycopg2"}
+            or             parsed_database_url.scheme not in {"postgresql", "postgresql+psycopg2", "postgresql+psycopg"}
             or not parsed_database_url.hostname
             or not parsed_database_url.path.strip("/")
         ):
