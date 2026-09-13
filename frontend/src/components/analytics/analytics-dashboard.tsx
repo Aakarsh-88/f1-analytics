@@ -93,7 +93,7 @@ export function AnalyticsDashboard({ data }: { data: AnalyticsData }) {
       <SeasonRangeFilter range={data.seasonRange} fromYear={driverFromYear} toYear={driverToYear} labelPrefix="Driver " onChange={(from, to) => { setDriverFromYear(from); setDriverToYear(to); }} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card><CardHeader><CardTitle>Pole Positions</CardTitle></CardHeader><PolePositionsChart rows={selectedPole.filter((row) => data.avgQualifying.points.some((point) => point.season >= driverFromYear && point.season <= driverToYear && point[row.driverCode] !== undefined))} driverTeams={driverTeams} /></Card>
-        <Card><CardHeader><CardTitle>Average Qualifying Position</CardTitle></CardHeader><AverageQualifyingChart points={filtered(data.avgQualifying.points)} driverCodes={drivers} driverTeams={driverTeams} /></Card>
+        <Card><CardHeader><CardTitle>AVERAGE QUALIFYING POSITION (LOWER IS BETTER)</CardTitle></CardHeader><AverageQualifyingChart points={filtered(data.avgQualifying.points)} driverCodes={drivers} driverTeams={driverTeams} /></Card>
         <Card><CardHeader><CardTitle>Races Won</CardTitle></CardHeader><DriverSeriesChart points={filtered(raceWins.points)} driverCodes={drivers} driverTeams={driverTeams} title="Races won" bar /></Card>
         <Card><CardHeader><CardTitle>AVERAGE FINISHING POSITION (LOWER IS BETTER)</CardTitle></CardHeader><DriverSeriesChart points={filtered(avgFinishing.points)} driverCodes={drivers} driverTeams={driverTeams} title="Average finish" /></Card>
         <Card><CardHeader><CardTitle>Podium Trends</CardTitle></CardHeader><DriverSeriesChart points={filtered(data.podiumTrends.points)} driverCodes={drivers} driverTeams={driverTeams} title="Podiums" bar /></Card>

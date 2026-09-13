@@ -35,16 +35,11 @@ export function AverageQualifyingChart({ points, driverCodes, driverTeams }: Ave
           tickLine={false}
         />
         <YAxis
-          // Reversed: P1 (best) renders at the top of the chart, matching
-          // how a fan reads "qualifying improved" as an upward line —
-          // the raw numbers get smaller as performance gets better.
-          reversed
           allowDecimals={false}
-          domain={[1, "dataMax + 1"]}
+          domain={[0, "dataMax + 1"]}
           tick={{ fill: "rgb(var(--text-secondary))", fontSize: 12, fontFamily: "var(--font-mono)" }}
           axisLine={false}
           tickLine={false}
-          label={{ value: "Avg. grid position", angle: -90, position: "insideLeft", fontSize: 11 }}
         />
         <Tooltip
           contentStyle={{
