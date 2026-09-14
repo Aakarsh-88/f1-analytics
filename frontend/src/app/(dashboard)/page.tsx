@@ -23,7 +23,7 @@ export default async function DashboardPage() {
     .slice(0, 3);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
         <h1 className="font-display text-2xl font-bold">Dashboard</h1>
         <p className="mt-1 text-sm text-[rgb(var(--text-secondary))]">
@@ -31,7 +31,7 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
         <StatCard label="Total Races" value={stats.totalRaces.toLocaleString()} icon={Flag} />
         <StatCard label="Total Drivers" value={stats.totalDrivers.toLocaleString()} icon={Users} />
         <StatCard
@@ -42,7 +42,7 @@ export default async function DashboardPage() {
         <StatCard label="Seasons" value={stats.totalSeasons} icon={Trophy} />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Constructor Championships</CardTitle>

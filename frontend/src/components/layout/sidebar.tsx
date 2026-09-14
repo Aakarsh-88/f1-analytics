@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
+export const NAV_ITEMS = [
   { href: "/", label: "Dashboard", icon: Gauge },
   { href: "/drivers", label: "Drivers", icon: Users },
   { href: "/constructors", label: "Constructors", icon: Shield },

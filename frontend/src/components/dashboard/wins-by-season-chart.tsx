@@ -54,7 +54,7 @@ export function WinsBySeasonChart({ data }: { data: ChartData }) {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={260}>
+    <ResponsiveContainer width="100%" height={260} minWidth={1}>
       <BarChart data={chartData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--surface-border))" vertical={false} />
         <XAxis

@@ -8,11 +8,13 @@ import {
   SignInButton,
 } from "@clerk/nextjs";
 
-import { Building2, Flag, Search, Trophy, Users } from "lucide-react";
+import { Building2, Flag, Menu, Search, Trophy, Users, X } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { NAV_ITEMS } from "@/components/layout/sidebar";
 import { cn } from "@/lib/utils";
 import type { SearchItem, SearchItemType } from "@/types/search";
 
@@ -39,6 +41,7 @@ export function TopNav({
 }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -72,8 +75,8 @@ export function TopNav({
   }
 
   return (
-    <header className="flex h-16 items-center justify-between gap-4 border-b border-line bg-[rgb(var(--surface-card))] px-6">
-      <div ref={containerRef} className="relative w-full max-w-sm">
+    <header className="relative flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-line bg-[rgb(var(--surface-card))] px-3 py-3 md:h-16 md:flex-nowrap md:gap-4 md:px-6 md:py-0">
+      <div ref={containerRef} className="order-1 relative w-full max-w-none md:order-none md:max-w-sm">
         <Search
           size={16}
           className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[rgb(var(--text-secondary))]"
@@ -132,12 +135,21 @@ export function TopNav({
         )}
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="order-2 ml-auto flex items-center gap-2 md:gap-4">
+        <button
+          type="button"
+          aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileNavOpen}
+          onClick={() => setMobileNavOpen((current) => !current)}
+          className="rounded-md p-2 text-[rgb(var(--text-secondary))] hover:bg-[rgb(var(--surface-elevated))] hover:text-[rgb(var(--text-primary))] md:hidden"
+        >
+          {mobileNavOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
         <ThemeToggle />
 
         <SignedOut>
           <SignInButton mode="modal">
-            <button className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
+            <button className="whitespace-nowrap rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
               Sign In
             </button>
           </SignInButton>
@@ -147,6 +159,27 @@ export function TopNav({
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
       </div>
+
+      {mobileNavOpen && (
+        <nav className="order-3 w-full border-t border-line pt-2 md:hidden">
+          <div className="grid grid-cols-2 gap-1">
+            {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileNavOpen(false)}
+                  className="flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-[rgb(var(--text-secondary))] hover:bg-[rgb(var(--surface-elevated))] hover:text-[rgb(var(--text-primary))]"
+                >
+                  <Icon size={17} />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </header>
   );
 }

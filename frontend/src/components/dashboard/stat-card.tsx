@@ -14,7 +14,7 @@ interface StatCardProps {
 
 export function StatCard({ label, value, icon: Icon, trend, trendPositive }: StatCardProps) {
   return (
-    <Card>
+    <Card className="[&>div:last-child]:p-4 md:[&>div:last-child]:p-5">
       <div className="flex items-start justify-between">
         <div>
           <p className="font-display text-xs font-semibold uppercase tracking-wider text-[rgb(var(--text-secondary))]">
