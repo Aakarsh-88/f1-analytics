@@ -3,6 +3,7 @@
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { getDistinctDriverColors } from "@/lib/analytics-driver-colors";
+import { SortedTooltip } from "@/components/analytics/sorted-tooltip";
 import type { DriverTeamPoint, FastestLapLeaderboardRow } from "@/types/analytics";
 import { Cell } from "recharts";
 
@@ -41,6 +42,11 @@ export function FastestLapsChart({
           tickLine={false}
         />
         <Tooltip
+          content={
+            <SortedTooltip
+              formatValue={(value) => `${String(value ?? "")} fastest laps`}
+            />
+          }
           cursor={{ fill: "rgba(0,217,126,0.08)" }}
           contentStyle={{
             backgroundColor: "rgb(var(--surface-elevated))",
@@ -51,12 +57,6 @@ export function FastestLapsChart({
             fontFamily: "var(--font-mono)",
           }}
           itemStyle={{ color: "rgb(var(--text-primary))" }}
-          formatter={(value, name) => [
-  typeof value === "number"
-    ? `${value} fastest laps`
-    : String(value ?? ""),
-  String(name),
-]}
         />
         <Bar dataKey="fastestLaps" radius={[0, 3, 3, 0]} maxBarSize={20}>
           {rows.map((row) => (

@@ -3,6 +3,7 @@
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 import type { ResultsBreakdown } from "@/types/driver";
+import { SortedTooltip } from "@/components/analytics/sorted-tooltip";
 
 const SLICE_COLORS = {
   wins: "#E10600",
@@ -34,6 +35,7 @@ export function ResultsDistributionChart({ breakdown }: { breakdown: ResultsBrea
           ))}
         </Pie>
         <Tooltip
+          content={<SortedTooltip />}
           contentStyle={{
             backgroundColor: "rgb(var(--surface-elevated))",
             color: "rgb(var(--text-primary))",

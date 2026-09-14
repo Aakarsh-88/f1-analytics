@@ -13,6 +13,7 @@ import {
 } from "recharts";
 
 import type { LapTimePoint } from "@/types/race";
+import { SortedTooltip } from "@/components/analytics/sorted-tooltip";
 
 const DRIVER_LINE_COLORS: Record<string, string> = {
   VER: "#3671C6",
@@ -97,6 +98,13 @@ export function LapTimeChart({
         />
 
         <Tooltip
+          content={
+            <SortedTooltip
+              formatValue={(value) =>
+                typeof value === "number" ? `${value.toFixed(3)}s` : String(value ?? "")
+              }
+            />
+          }
           contentStyle={{
             backgroundColor: "rgb(var(--surface-elevated))",
             color: "rgb(var(--text-primary))",
@@ -107,13 +115,6 @@ export function LapTimeChart({
           }}
           itemStyle={{ color: "rgb(var(--text-primary))" }}
           labelFormatter={(lap) => `Lap ${lap}`}
-          formatter={(value, name) => {
-            if (typeof value === "number") {
-              return [`${value.toFixed(3)}s`, String(name)];
-            }
-
-            return [String(value ?? ""), String(name)];
-          }}
         />
 
         <Legend

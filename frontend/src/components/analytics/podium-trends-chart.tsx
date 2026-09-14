@@ -12,6 +12,7 @@ import {
 } from "recharts";
 
 import { getDistinctDriverColors } from "@/lib/analytics-driver-colors";
+import { SortedTooltip } from "@/components/analytics/sorted-tooltip";
 import type { DriverTeamPoint } from "@/types/analytics";
 import type { PodiumTrendPoint } from "@/types/analytics";
 
@@ -41,6 +42,7 @@ export function PodiumTrendsChart({ points, driverCodes, driverTeams }: PodiumTr
           tickLine={false}
         />
         <Tooltip
+          content={<SortedTooltip />}
           contentStyle={{
             backgroundColor: "rgb(var(--surface-elevated))",
             color: "rgb(var(--text-primary))",

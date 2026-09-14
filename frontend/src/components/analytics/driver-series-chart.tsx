@@ -2,6 +2,7 @@
 
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { getDistinctDriverColors } from "@/lib/analytics-driver-colors";
+import { SortedTooltip } from "@/components/analytics/sorted-tooltip";
 import type { DriverSeriesPoint, DriverTeamPoint } from "@/types/analytics";
 
 export function DriverSeriesChart({
@@ -11,6 +12,7 @@ export function DriverSeriesChart({
   title,
   percentage = false,
   bar = false,
+  lowerIsBetter = false,
 }: {
   points: DriverSeriesPoint[];
   driverCodes: string[];
@@ -18,6 +20,7 @@ export function DriverSeriesChart({
   title: string;
   percentage?: boolean;
   bar?: boolean;
+  lowerIsBetter?: boolean;
 }) {
   const colors = getDistinctDriverColors(driverTeams, driverCodes);
   const chartProps = {
@@ -26,9 +29,16 @@ export function DriverSeriesChart({
   };
   const tooltip = (
     <Tooltip
+      content={
+        <SortedTooltip
+          sortDescending={!lowerIsBetter}
+          formatValue={(value) =>
+            percentage ? `${Number(value).toFixed(1)}%` : Number(value).toFixed(2)
+          }
+        />
+      }
       contentStyle={{ backgroundColor: "rgb(var(--surface-elevated))", color: "rgb(var(--text-primary))", border: "1px solid rgb(var(--surface-border))" }}
       itemStyle={{ color: "rgb(var(--text-primary))" }}
-      formatter={(value, name) => [percentage ? `${Number(value).toFixed(1)}%` : Number(value).toFixed(2), String(name)]}
     />
   );
 

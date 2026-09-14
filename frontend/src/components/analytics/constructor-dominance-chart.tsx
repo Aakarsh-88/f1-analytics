@@ -13,6 +13,7 @@ import {
 
 import type { ConstructorDominancePoint, ConstructorMeta } from "@/types/analytics";
 import { getDistinctComparisonColors } from "@/lib/comparison-colors";
+import { SortedTooltip } from "@/components/analytics/sorted-tooltip";
 
 const TEAM_LINE_COLORS: Record<string, string> = {
   mercedes: "#27F4D2",
@@ -50,6 +51,7 @@ export function ConstructorDominanceChart({ points, constructors }: ConstructorD
           tickLine={false}
         />
         <Tooltip
+          content={<SortedTooltip />}
           contentStyle={{
             backgroundColor: "rgb(var(--surface-elevated))",
             color: "rgb(var(--text-primary))",

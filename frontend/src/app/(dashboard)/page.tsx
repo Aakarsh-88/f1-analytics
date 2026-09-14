@@ -16,11 +16,14 @@ export default async function DashboardPage() {
   const topConstructors = constructors
     .filter((constructor) => constructor.championships > 0)
     .sort((a, b) => b.championships - a.championships || a.name.localeCompare(b.name))
-    .slice(0, 3);
+    .slice(0, 5);
+  const topConstructorWins = [...constructors]
+    .sort((a, b) => b.wins - a.wins || a.name.localeCompare(b.name))
+    .slice(0, 5);
   const topDrivers = drivers
     .filter((driver) => driver.championships > 0)
     .sort((a, b) => b.championships - a.championships || a.fullName.localeCompare(b.fullName))
-    .slice(0, 3);
+    .slice(0, 6);
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -43,12 +46,20 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Constructor Championships</CardTitle>
-          </CardHeader>
-          <WinsBySeasonChart data={topConstructors} />
-        </Card>
+        <div className="space-y-3 lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Constructor Championships</CardTitle>
+            </CardHeader>
+            <WinsBySeasonChart data={topConstructors} />
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>RACES WON (TOP 5 CONSTRUCTORS)</CardTitle>
+            </CardHeader>
+            <WinsBySeasonChart data={topConstructorWins} constructorMetric="wins" metricLabel="Wins" />
+          </Card>
+        </div>
 
         <div className="space-y-3">
           <h2 className="font-display text-xs font-semibold uppercase tracking-wider text-[rgb(var(--text-secondary))]">

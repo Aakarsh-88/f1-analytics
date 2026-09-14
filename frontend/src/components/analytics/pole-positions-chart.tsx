@@ -13,19 +13,7 @@ import {
 import { getDistinctDriverColors } from "@/lib/analytics-driver-colors";
 import type { DriverTeamPoint, PoleLeaderboardRow } from "@/types/analytics";
 import { Cell } from "recharts";
-
-function PoleTooltip({ active, payload }: { active?: boolean; payload?: Array<{ value?: number; payload?: PoleLeaderboardRow }> }) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="rounded-md border border-line bg-[rgb(var(--surface-elevated))] p-2 font-mono text-xs text-[rgb(var(--text-primary))]">
-      {payload.map((item) => (
-        <p key={item.payload?.driverCode}>
-          {item.payload?.driverCode}: {item.value}
-        </p>
-      ))}
-    </div>
-  );
-}
+import { SortedTooltip } from "@/components/analytics/sorted-tooltip";
 
 export function PolePositionsChart({
   rows,
@@ -78,7 +66,11 @@ export function PolePositionsChart({
 
         <Tooltip
           cursor={{ fill: "rgba(155,93,229,0.08)" }}
-          content={<PoleTooltip />}
+          content={
+            <SortedTooltip
+              formatName={(entry) => String(entry.payload?.driverCode ?? entry.name)}
+            />
+          }
           contentStyle={{
             backgroundColor: "rgb(var(--surface-elevated))",
             color: "rgb(var(--text-primary))",

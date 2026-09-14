@@ -11,6 +11,7 @@ import {
   YAxis,
 } from "recharts";
 import type { ConstructorSummary } from "@/types/constructor";
+import { SortedTooltip } from "@/components/analytics/sorted-tooltip";
 
 const CONSTRUCTOR_COLORS: Record<string, string> = {
   mercedes: "#27F4D2",
@@ -29,7 +30,15 @@ const DEFAULT_CONSTRUCTOR_COLOR = "#6B7280";
 type SeasonWins = { season: number; wins: number };
 type ChartData = ConstructorSummary[] | SeasonWins[];
 
-export function WinsBySeasonChart({ data }: { data: ChartData }) {
+export function WinsBySeasonChart({
+  data,
+  constructorMetric = "championships",
+  metricLabel,
+}: {
+  data: ChartData;
+  constructorMetric?: "championships" | "wins";
+  metricLabel?: string;
+}) {
   const constructorData =
     data.length > 0 && "constructorRef" in data[0]! ? (data as ConstructorSummary[]) : null;
   const isConstructorData = constructorData !== null;
@@ -37,7 +46,7 @@ export function WinsBySeasonChart({ data }: { data: ChartData }) {
     constructorData
       ? constructorData.map((constructor) => ({
           label: constructor.name,
-          value: constructor.championships,
+          value: constructor[constructorMetric],
           constructorRef: constructor.constructorRef,
         }))
       : (data as SeasonWins[]).map((season) => ({
@@ -69,6 +78,11 @@ export function WinsBySeasonChart({ data }: { data: ChartData }) {
           tickLine={false}
         />
         <Tooltip
+          content={
+            <SortedTooltip
+              formatName={() => metricLabel ?? (isConstructorData ? "Titles" : "Wins")}
+            />
+          }
           cursor={{ fill: "rgba(225,6,0,0.06)" }}
           contentStyle={{
             backgroundColor: "rgb(var(--surface-elevated))",
@@ -80,7 +94,6 @@ export function WinsBySeasonChart({ data }: { data: ChartData }) {
           }}
           labelStyle={{ color: "rgb(var(--text-primary))", fontWeight: 600 }}
           itemStyle={{ color: "rgb(var(--text-primary))" }}
-          formatter={(value) => [value, isConstructorData ? "Titles" : "Wins"]}
         />
         <Bar
           dataKey="value"

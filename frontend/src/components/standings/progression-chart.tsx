@@ -16,6 +16,7 @@ import type {
   ConstructorChampionshipProgressionPoint,
 } from "@/types/standings";
 import { getDistinctComparisonColors } from "@/lib/comparison-colors";
+import { SortedTooltip } from "@/components/analytics/sorted-tooltip";
 
 const DEFAULT_LINE_COLOR = "#9B5DE5";
 const CONSTRUCTOR_LINE_COLORS: Record<string, string> = {
@@ -70,6 +71,7 @@ export function ProgressionChart({ data, series, kind, seriesLabels = {} }: Prog
           tickLine={false}
         />
         <Tooltip
+          content={<SortedTooltip />}
           contentStyle={{
             backgroundColor: "rgb(var(--surface-elevated))",
             color: "rgb(var(--text-primary))",
