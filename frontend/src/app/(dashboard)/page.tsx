@@ -74,6 +74,10 @@ export default async function DashboardPage() {
           ))}
         </div>
       </div>
+
+      <p className="text-center text-xs text-[rgb(var(--text-secondary))]">
+        Note: All metrics shown on this dashboard exclude data from sprint races.
+      </p>
     </div>
   );
 }
